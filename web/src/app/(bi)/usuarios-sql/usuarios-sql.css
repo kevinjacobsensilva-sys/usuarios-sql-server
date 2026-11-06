@@ -1,0 +1,238 @@
+/* Configurações > Usuários SQL Server (04/11/2026). Tudo escopado em .usql.
+   Mesmo vocabulário da Auditoria de acessos: cartão branco com borda, cabeçalho
+   de tabela azul, número em tabular-nums, cor só onde decide algo (faixa de
+   recência, situação, botão primário e de perigo). Tabela com mais de 20 linhas
+   rola DENTRO do quadro com o cabeçalho fixo; o painel da direita rola sozinho. */
+.usql{
+  --u-good:#1f6f28; --u-good-bg:#e7f5e9;
+  --u-warn:#7a5800; --u-warn-bg:#fff5d6;
+  --u-serious:#9a3412; --u-serious-bg:#ffedd5;
+  --u-crit:#8b0836; --u-crit-bg:#fde6ee;
+  --u-dead:#4c0519; --u-dead-bg:#fecdd3;
+  --u-never:#334155; --u-never-bg:#e2e8f0;
+  --u-off:#475569; --u-off-bg:#e2e8f0;
+  --u-danger:#b91c1c; --u-danger-hover:#991b1b;
+  --u-th:34px; --u-tr:44px;
+  display:flex; flex-direction:column; gap:12px; min-width:0;
+}
+html.dark .usql{
+  --u-good:#86efac; --u-good-bg:rgba(34,197,94,.16);
+  --u-warn:#fcd34d; --u-warn-bg:rgba(245,158,11,.16);
+  --u-serious:#fdba74; --u-serious-bg:rgba(249,115,22,.16);
+  --u-crit:#fda4af; --u-crit-bg:rgba(244,63,94,.16);
+  --u-dead:#fb7185; --u-dead-bg:rgba(190,18,60,.28);
+  --u-never:#cbd5e1; --u-never-bg:rgba(148,163,184,.18);
+  --u-off:#cbd5e1; --u-off-bg:rgba(148,163,184,.18);
+  --u-danger:#f87171; --u-danger-hover:#ef4444;
+}
+
+/* ---------------------------------------------------------------- barra de comando */
+.usql .usql-bar{display:flex; flex-wrap:wrap; align-items:center; gap:10px}
+.usql .espaco{flex:1 1 auto}
+.usql .meta{font-size:11.5px; color:var(--muted-foreground)}
+.usql .meta b{font-weight:600; color:var(--foreground)}
+.usql .meta.ok{color:var(--u-good)}
+.usql .meta.alerta{color:var(--u-crit)}
+
+.usql .seg{display:inline-flex; flex-wrap:wrap; align-items:center; gap:2px; padding:3px; border:1px solid var(--border);
+  background:var(--card); border-radius:999px}
+.usql .seg button{all:unset; cursor:pointer; min-height:28px; padding:0 12px; border-radius:999px; font-size:12.5px;
+  font-weight:600; color:var(--muted-foreground); white-space:nowrap;
+  transition:background-color .15s ease-out, color .15s ease-out}
+.usql .seg button:hover{color:var(--foreground); background:var(--surface-2)}
+.usql .seg button:focus-visible{outline:2px solid var(--primary); outline-offset:1px}
+.usql .seg button[aria-pressed="true"]{background:var(--primary); color:#fff}
+
+.usql .busca{display:flex; align-items:center; gap:8px; min-height:36px; padding:0 12px; border:1px solid var(--border);
+  border-radius:10px; background:var(--card); color:var(--muted-foreground); min-width:230px}
+.usql .busca.mini{min-height:30px; min-width:150px; padding:0 9px}
+.usql .busca input{all:unset; flex:1 1 auto; min-width:0; font-size:13px; color:var(--foreground)}
+.usql .busca input::placeholder{color:var(--muted-foreground)}
+.usql .busca:focus-within{border-color:var(--primary); box-shadow:0 0 0 3px var(--ring)}
+.usql .busca .limpar{all:unset; cursor:pointer; display:grid; place-items:center; height:22px; width:22px; border-radius:999px}
+.usql .busca .limpar:hover{background:var(--surface-2); color:var(--foreground)}
+
+.usql .btn{display:inline-flex; align-items:center; gap:8px; min-height:36px; padding:0 14px; border-radius:10px; border:1px solid var(--border);
+  background:var(--card); font-size:12.5px; font-weight:600; color:var(--foreground); cursor:pointer; white-space:nowrap;
+  transition:background-color .15s ease-out, border-color .15s ease-out}
+.usql .btn:hover{background:var(--surface-2)}
+.usql .btn:focus-visible{outline:2px solid var(--primary); outline-offset:2px}
+.usql .btn:disabled{opacity:.5; cursor:default}
+.usql .btn-primario{background:var(--primary); border-color:var(--primary); color:#fff}
+.usql .btn-primario:hover:not(:disabled){background:color-mix(in oklab, var(--primary) 85%, #000); border-color:color-mix(in oklab, var(--primary) 85%, #000)}
+.usql .btn-perigo{background:var(--u-danger); border-color:var(--u-danger); color:#fff}
+.usql .btn-perigo:hover:not(:disabled){background:var(--u-danger-hover); border-color:var(--u-danger-hover)}
+.usql .btn-perigo-suave{color:var(--u-danger)}
+/* Excel verde solido, como nas outras telas (padrao do Kevin) */
+.usql .btn-excel{background:#217346; border-color:#217346; color:#fff}
+.usql .btn-excel:hover:not(:disabled){background:#1a5c37; border-color:#1a5c37}
+.usql .btn-excel:focus-visible{outline-color:#217346}
+.usql .btn-perigo-suave:hover{background:var(--u-crit-bg)}
+
+/* ---------------------------------------------------------------- avisos */
+.usql .erro{border-radius:12px; padding:10px 14px; font-size:13px; background:var(--color-status-danger-bg, #fde6ee);
+  color:var(--color-status-danger-fg, #8b0836); border:1px solid color-mix(in oklab, var(--color-status-danger-fg, #8b0836) 25%, transparent)}
+.usql .erro.destaque{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0}
+.usql .erro.destaque .btn{min-height:30px; border-color:currentColor}
+.usql .ok-msg{border-radius:12px; padding:10px 14px; font-size:13px; background:var(--u-good-bg); color:var(--u-good);
+  border:1px solid color-mix(in oklab, var(--u-good) 25%, transparent)}
+.usql .aviso{display:flex; gap:8px; align-items:flex-start; border-radius:10px; padding:8px 12px; font-size:12px;
+  background:var(--surface-2); color:var(--muted-foreground); border:1px solid var(--border)}
+.usql .aviso code, .usql .meta code{font-size:11px; padding:1px 4px; border-radius:4px; background:var(--card); border:1px solid var(--border)}
+.usql .esqueleto{height:220px; border-radius:14px; border:1px solid var(--border);
+  background:linear-gradient(90deg, var(--surface-2) 25%, var(--card) 50%, var(--surface-2) 75%); background-size:200% 100%;
+  animation:usql-brilho 1.2s linear infinite}
+@keyframes usql-brilho{from{background-position:200% 0} to{background-position:-200% 0}}
+
+/* ---------------------------------------------------------------- indicadores */
+.usql .kpis{display:grid; gap:10px; grid-template-columns:repeat(6, minmax(0, 1fr)); margin:0}
+@media (max-width:1280px){ .usql .kpis{grid-template-columns:repeat(3, minmax(0, 1fr))} }
+@media (max-width:720px){ .usql .kpis{grid-template-columns:repeat(2, minmax(0, 1fr))} }
+.usql .kpi{display:flex; flex-direction:column; gap:2px; min-width:0; padding:12px 14px; border-radius:14px;
+  border:1px solid var(--border); background:var(--card); box-shadow:var(--shadow-card)}
+.usql .kpi dt{margin:0; font-size:11.5px; font-weight:600; color:var(--muted-foreground)}
+.usql .kpi dd{margin:0; font-size:22px; line-height:1.15; font-weight:700; letter-spacing:-.02em; color:var(--foreground);
+  font-variant-numeric:tabular-nums; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.usql .kpi .pe{margin:2px 0 0; font-size:11.5px; font-weight:400; color:var(--muted-foreground); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.usql .kpi .pe b{font-weight:600; color:var(--foreground)}
+.usql .kpi .alerta{color:var(--u-crit)}
+.usql .kpi .ok{color:var(--u-good)}
+
+/* ---------------------------------------------------------------- grade de quadros */
+.usql .grade{display:grid; grid-template-columns:repeat(12, minmax(0, 1fr)); gap:10px; align-items:stretch}
+.usql .quadro{display:flex; flex-direction:column; min-width:0; border-radius:14px; border:1px solid var(--border);
+  background:var(--card); box-shadow:var(--shadow-card)}
+.usql .c5{grid-column:span 5} .usql .c7{grid-column:span 7} .usql .c12{grid-column:span 12}
+@media (max-width:1100px){ .usql .c5, .usql .c7{grid-column:span 12} }
+.usql .quadro-topo{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 12px; padding:11px 14px 9px;
+  border-bottom:1px solid var(--border-subtle)}
+.usql .quadro-topo h2{margin:0; font-size:13.5px; font-weight:700; color:var(--foreground)}
+.usql .quadro-topo p{margin:1px 0 0; font-size:11.5px; color:var(--muted-foreground)}
+.usql .quadro-corpo{flex:1 1 auto; display:flex; flex-direction:column; gap:10px; min-width:0; padding:10px 14px 12px}
+.usql .quadro-pe{margin-top:auto; padding:8px 14px 10px; font-size:11px; color:var(--muted-foreground); border-top:1px solid var(--border-subtle)}
+
+/* ---------------------------------------------------------------- tabelas (20 linhas e rola) */
+.usql .rolagem{overflow:auto; border:1px solid var(--border); border-radius:10px;
+  max-height:calc(var(--u-th) + 20 * var(--u-tr) + 2px)}
+.usql .rolagem.curta{max-height:calc(var(--u-th) + 8 * var(--u-tr) + 2px)}
+.usql table.tab{width:100%; border-collapse:separate; border-spacing:0; font-size:12.5px}
+.usql .tab th{position:sticky; top:0; z-index:2; height:var(--u-th); box-sizing:border-box; padding:0 10px;
+  background:var(--thead-bg, #203BA4); color:var(--thead-fg, #fff); font-weight:700; font-size:11px; text-transform:uppercase;
+  letter-spacing:.04em; text-align:left; white-space:nowrap}
+.usql .tab th.num, .usql .tab td.num{text-align:right; font-variant-numeric:tabular-nums}
+.usql .tab th button{all:unset; cursor:pointer; display:inline-flex; align-items:center; gap:4px}
+.usql .tab th button:hover{text-decoration:underline; text-underline-offset:3px}
+.usql .tab th button:focus-visible{outline:2px solid #fff; outline-offset:2px; border-radius:3px}
+.usql .tab th .seta{font-size:9px; opacity:.9}
+.usql .tab td{height:var(--u-tr); box-sizing:border-box; padding:0 10px; border-bottom:1px solid var(--border-subtle);
+  color:var(--foreground); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:320px; vertical-align:middle}
+.usql .tab tr.clic{cursor:pointer}
+.usql .tab tbody tr{transition:background-color .12s ease-out}
+.usql .tab tbody tr.clic:hover{background:var(--row-highlight, rgba(32,59,164,.05))}
+.usql .tab tbody tr[aria-selected="true"]{background:color-mix(in oklab, var(--primary) 12%, transparent)}
+.usql .tab tbody tr:focus-visible{outline:2px solid var(--primary); outline-offset:-2px}
+.usql .tab tbody tr:last-child td{border-bottom:0}
+.usql .tab td.zero, .usql .tab td .zero{color:var(--muted-foreground)}
+.usql .tab td.detalhe{max-width:420px}
+.usql .tab td.quem{max-width:460px; color:var(--muted-foreground); font-size:12px}
+.usql .grade[hidden]{display:none}
+.usql .nome b{display:block; font-weight:600; overflow:hidden; text-overflow:ellipsis}
+.usql .nome span{display:block; font-size:11px; color:var(--muted-foreground); overflow:hidden; text-overflow:ellipsis}
+.usql .nome .sem{font-weight:400; color:var(--muted-foreground)}
+.usql .quando b{display:block; font-weight:500; font-variant-numeric:tabular-nums}
+.usql .quando span{display:block; font-size:11px; color:var(--muted-foreground)}
+.usql .tab td.vazio{height:auto; padding:28px 12px; text-align:center; white-space:normal; color:var(--muted-foreground)}
+.usql .sel{min-height:28px; padding:0 8px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--foreground); font-size:12.5px}
+
+/* selos: cor + texto, nunca só cor */
+.usql .selo{display:inline-flex; align-items:center; gap:6px; height:22px; padding:0 8px; border-radius:999px; font-size:11px; font-weight:600;
+  white-space:nowrap; background:var(--selo-bg); color:var(--selo-fg)}
+.usql .selo i{display:inline-block; height:7px; width:7px; border-radius:999px; background:currentColor}
+.usql .selo.sem{background:transparent; color:var(--muted-foreground); padding:0; font-weight:500}
+.usql .f-ate30{--selo-fg:var(--u-good); --selo-bg:var(--u-good-bg)}
+.usql .f-31a60{--selo-fg:var(--u-warn); --selo-bg:var(--u-warn-bg)}
+.usql .f-61a90{--selo-fg:var(--u-serious); --selo-bg:var(--u-serious-bg)}
+.usql .f-91a120{--selo-fg:var(--u-crit); --selo-bg:var(--u-crit-bg)}
+.usql .f-mais120{--selo-fg:var(--u-dead); --selo-bg:var(--u-dead-bg)}
+.usql .f-nunca{--selo-fg:var(--u-never); --selo-bg:var(--u-never-bg)}
+.usql .pill{display:inline-flex; align-items:center; height:22px; padding:0 8px; border-radius:999px; font-size:11px; font-weight:600;
+  white-space:nowrap; background:var(--surface-2); color:var(--muted-foreground); border:1px solid var(--border)}
+.usql .pill + .pill, .usql .pill.ml{margin-left:6px}
+.usql .pill.ml0{margin-right:6px}
+.usql .nome b .pill{display:inline-flex; vertical-align:middle; font-weight:600}
+.usql .pill.ok{background:var(--u-good-bg); color:var(--u-good); border-color:transparent}
+.usql .pill.alerta{background:var(--u-crit-bg); color:var(--u-crit); border-color:transparent}
+.usql .pill.off{background:var(--u-off-bg); color:var(--u-off); border-color:transparent}
+
+/* ---------------------------------------------------------------- gaveta (desliza da direita) */
+/* Mesmo desenho da gaveta do gestor na Jornada de Trabalho: véu que clareia junto,
+   entrada desacelerando (ease-out), saída mais curta acelerando (ease-in). Só transform
+   e opacity: nada de layout no caminho. O componente desmonta depois de SAIDA_MS
+   (UsuariosSql.client.tsx) — os .26s daqui e o valor de lá andam juntos. */
+.usql-veu{position:fixed; inset:0; z-index:40; background:rgba(8,14,30,.42); animation:usql-veu-entra .26s ease-out}
+.usql.usql-gav{position:fixed; top:0; right:0; bottom:0; z-index:41; width:min(820px, 100vw); overflow:auto; gap:0;
+  background:var(--background, #eaeef7); box-shadow:-18px 0 40px -12px rgba(8,14,30,.45);
+  animation:usql-gav-entra .34s cubic-bezier(.22,1,.36,1)}
+.usql-veu.sai{animation:usql-veu-sai .26s ease-in forwards}
+.usql.usql-gav.sai{animation:usql-gav-sai .26s cubic-bezier(.4,0,1,1) forwards}
+@keyframes usql-gav-entra{from{transform:translateX(100%)} to{transform:none}}
+@keyframes usql-gav-sai{to{transform:translateX(100%)}}
+@keyframes usql-veu-entra{from{opacity:0} to{opacity:1}}
+@keyframes usql-veu-sai{to{opacity:0}}
+@media (prefers-reduced-motion:reduce){ .usql-veu, .usql-veu.sai, .usql.usql-gav, .usql.usql-gav.sai{animation:none} }
+.usql .gav-cab{position:sticky; top:0; z-index:3; display:flex; align-items:flex-start; gap:12px; padding:16px 18px 14px; color:#fff;
+  background:linear-gradient(135deg, #0f3d8c 0%, #203BA4 55%, #144fb4 100%); box-shadow:0 6px 18px -10px rgba(8,14,30,.6)}
+html.dark .usql .gav-cab{background:linear-gradient(135deg, #0c1829 0%, #14265e 55%, #1b3a86 100%)}
+.usql .gav-cab-txt{flex:1 1 auto; min-width:0}
+.usql .gav-cab h2{margin:0; font-size:19px; font-weight:700; letter-spacing:-.02em; overflow-wrap:anywhere}
+.usql .gav-cab p{margin:3px 0 0; font-size:12px; color:rgba(255,255,255,.82)}
+.usql .gav-pill{margin-top:3px; border-color:transparent}
+.usql .gav-fecha{all:unset; cursor:pointer; display:grid; place-items:center; flex:0 0 auto; width:36px; height:36px; border-radius:10px;
+  background:rgba(255,255,255,.14); color:#fff}
+.usql .gav-fecha:hover{background:rgba(255,255,255,.26)}
+.usql .gav-fecha:focus-visible{outline:2px solid #fff; outline-offset:2px}
+.usql .gav-corpo{padding:4px 18px 40px}
+.usql .detalhe{display:flex; flex-direction:column; gap:12px; padding:12px 0 0}
+.usql .bloco{display:flex; flex-direction:column; gap:8px; padding-top:10px; border-top:1px solid var(--border-subtle)}
+.usql .bloco h3{margin:0; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--muted-foreground)}
+.usql .fatos{display:grid; gap:4px 12px; margin:0; font-size:12.5px}
+.usql .fatos > div{display:grid; grid-template-columns:140px minmax(0,1fr); gap:8px}
+.usql .fatos dt{margin:0; color:var(--muted-foreground)}
+.usql .fatos dd{margin:0; color:var(--foreground); overflow-wrap:anywhere}
+.usql .form-grid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px}
+@media (max-width:720px){ .usql .form-grid{grid-template-columns:1fr} }
+.usql .campo{display:flex; flex-direction:column; gap:3px; font-size:11.5px; color:var(--muted-foreground)}
+.usql .campo > span{font-weight:600}
+.usql .campo input{min-height:34px; padding:0 10px; border-radius:9px; border:1px solid var(--border); background:var(--card); color:var(--foreground); font-size:13px}
+.usql .campo input:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--ring)}
+.usql .campo input:disabled{opacity:.6}
+.usql .campo.inline{flex-direction:row; align-items:center; gap:8px}
+.usql .campo.inline input{width:90px; text-align:right; font-variant-numeric:tabular-nums}
+.usql .check{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--foreground)}
+.usql .check input{accent-color:var(--primary)}
+.usql .acoes{display:flex; flex-wrap:wrap; align-items:center; gap:8px}
+.usql .acoes.fim{padding-top:10px; border-top:1px solid var(--border-subtle)}
+.usql .lista-simples{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px; font-size:12.5px}
+.usql .lista-ls{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:2px}
+.usql .lista-ls label{display:grid; grid-template-columns:auto auto minmax(0,1fr); align-items:center; gap:8px; padding:5px 6px; border-radius:8px; cursor:pointer; font-size:12.5px}
+.usql .lista-ls label:hover{background:var(--surface-2)}
+.usql .lista-ls li.aberto label{cursor:default; color:var(--muted-foreground)}
+.usql .lista-ls input{accent-color:var(--primary)}
+.usql .lista-ls .ls-nome{font-weight:600; color:var(--foreground)}
+.usql .lista-ls li.aberto .ls-nome{color:var(--muted-foreground)}
+.usql .lista-ls .ls-meta{font-size:11px; color:var(--muted-foreground); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.usql .grade-bancos{display:flex; flex-direction:column; gap:6px}
+.usql .grade-bancos-topo{display:flex; align-items:center; justify-content:space-between; gap:8px}
+.usql .busca-rm{position:relative}
+.usql .sugestoes{position:absolute; z-index:5; top:calc(100% + 4px); left:0; right:0; margin:0; padding:4px; list-style:none; border-radius:10px;
+  border:1px solid var(--border); background:var(--card); box-shadow:var(--shadow-card); max-height:260px; overflow:auto}
+.usql .sugestoes button{all:unset; cursor:pointer; display:block; width:100%; box-sizing:border-box; padding:6px 8px; border-radius:7px}
+.usql .sugestoes button:hover, .usql .sugestoes button:focus-visible{background:var(--surface-2)}
+.usql .sugestoes b{display:block; font-size:12.5px; font-weight:600; color:var(--foreground)}
+.usql .sugestoes span{display:block; font-size:11px; color:var(--muted-foreground)}
+.usql .senha-box{display:flex; flex-direction:column; gap:6px; padding:10px 12px; border-radius:12px; border:1px solid color-mix(in oklab, var(--primary) 30%, transparent);
+  background:color-mix(in oklab, var(--primary) 7%, transparent)}
+.usql .senha-titulo{margin:0; font-size:12.5px; color:var(--foreground)}
+.usql .senha{display:inline-block; width:max-content; max-width:100%; padding:6px 10px; border-radius:8px; background:var(--card); border:1px solid var(--border);
+  font-size:16px; font-weight:700; letter-spacing:.06em; color:var(--foreground); user-select:all}
+.usql .config-linha{display:flex; flex-wrap:wrap; align-items:center; gap:10px}
